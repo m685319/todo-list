@@ -4,6 +4,9 @@ import com.example.todolist.model.Task;
 import com.example.todolist.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,8 +22,10 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public List<Task> getAll() {
-        return taskRepository.findAll();
+    public Page<Task> getAll(Integer page, Integer size, String sortBy, String sortDir) {
+        Sort.Direction direction = sortDir.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        return taskRepository.findAll(pageRequest);
     }
 
     public Task getById(long id) {

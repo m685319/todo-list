@@ -3,6 +3,7 @@ package com.example.todolist.controller;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,8 +22,11 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAll();
+    public Page<Task> getAllTasks(@RequestParam(defaultValue = "0") Integer page,
+                                  @RequestParam(defaultValue = "10") Integer size,
+                                  @RequestParam(defaultValue = "dueDate") String sortBy,
+                                  @RequestParam(defaultValue = "ASC") String sortDir) {
+        return taskService.getAll(page, size, sortBy, sortDir);
     }
 
     @GetMapping("/{id}")
