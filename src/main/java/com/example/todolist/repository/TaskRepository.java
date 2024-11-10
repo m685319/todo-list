@@ -11,4 +11,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findTaskByTitleContaining(String title);
 
     List<Task> findTaskByCompletedAndDueDateBefore(boolean completed, LocalDate dueDate);
+
+    List<Task> findByCompletionDateBetween(LocalDate dateFrom, LocalDate dateTo);
 }

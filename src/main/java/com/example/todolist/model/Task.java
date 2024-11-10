@@ -28,13 +28,6 @@ public class Task {
 
     private LocalDate completionDate;
 
-    public void setCompleted(boolean completed) {
-        if (!this.completed && completed) {
-            completionDate = LocalDate.now();
-        }
-        this.completed = completed;
-    }
-
     public enum Priority {
         LOW, MEDIUM, HIGH
     }

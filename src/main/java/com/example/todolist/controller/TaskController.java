@@ -1,8 +1,7 @@
 package com.example.todolist.controller;
 
 import com.example.todolist.model.Task;
-import com.example.todolist.repository.TaskRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.todolist.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,53 +13,45 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @PostMapping
     public Task createTask(@RequestBody Task task) {
-        return taskRepository.save(task);
+        return taskService.save(task);
     }
 
     @GetMapping
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return taskService.getAll();
     }
 
     @GetMapping("/{id}")
     public Task getTask(@PathVariable long id) {
-        return taskRepository.findById(id).orElse(null);
+        return taskService.getById(id);
     }
 
     @PutMapping("/{id}")
     public Task updateTask(@PathVariable Long id, @RequestBody Task toUpdate) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Task not found"));
-        task.setTitle(toUpdate.getTitle());
-        task.setDescription(toUpdate.getDescription());
-        task.setCompleted(toUpdate.isCompleted());
-        task.setPriority(toUpdate.getPriority());
-        task.setDueDate(toUpdate.getDueDate());
-        return taskRepository.save(task);
+        return taskService.update(id, toUpdate);
     }
 
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable long id) {
-        taskRepository.deleteById(id);
+        taskService.deleteById(id);
     }
 
     @GetMapping("/search")
     public List<Task> getTaskByTitle(@RequestParam String title) {
-        return taskRepository.findTaskByTitleContaining(title);
+        return taskService.getByTitle(title);
     }
 
     @PutMapping("/{id}/priority")
     public Task updateTaskPriority(@PathVariable long id, @RequestParam Task.Priority newPriority) {
-        Task task = taskRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Task not found"));
-        task.setPriority(newPriority);
-        return taskRepository.save(task);
+        return taskService.updateTaskPriority(id, newPriority);
     }
 
     @GetMapping("/filter")
     public List<Task> filterByCompletedAndDueDate(@RequestParam LocalDate dueDate, @RequestParam boolean completed) {
-        return taskRepository.findTaskByCompletedAndDueDateBefore(completed, dueDate);
+        return taskService.getTasksBeforeDate(completed, dueDate);
     }
 }
