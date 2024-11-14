@@ -64,4 +64,14 @@ public class TaskService {
     public List<Task> getTasksBeforeDate(boolean completed, LocalDate dueDate) {
         return taskRepository.findTaskByCompletedAndDueDateBefore(completed, dueDate);
     }
+
+    public Task markAsCompleted(Long id) {
+        Task task = getById(id);
+        if(!task.isCompleted()) {
+            task.setCompleted(true);
+            task.setCompletionDate(LocalDate.now());
+        }
+        return taskRepository.save(task);
+    }
+
 }

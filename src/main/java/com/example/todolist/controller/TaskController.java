@@ -58,4 +58,10 @@ public class TaskController {
     public List<Task> filterByCompletedAndDueDate(@RequestParam LocalDate dueDate, @RequestParam boolean completed) {
         return taskService.getTasksBeforeDate(completed, dueDate);
     }
+
+    @PutMapping("/{id}/complete")
+    public Task markTaskAsCompleted(@PathVariable Long id) {
+        return taskService.markAsCompleted(id);
+    }
+
 }
