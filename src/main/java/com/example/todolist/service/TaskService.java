@@ -74,4 +74,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    public List<Task> getOverdueTasks() {
+        return taskRepository.findByCompletedFalseAndDueDateBefore(LocalDate.now());
+    }
 }

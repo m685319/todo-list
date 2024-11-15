@@ -65,4 +65,8 @@ public class TaskController {
         return taskService.markAsCompleted(id);
     }
 
+    @GetMapping("/overdue")
+    public List<Task> getOverdueTasks() {
+        return taskService.getOverdueTasks();
+    }
 }
