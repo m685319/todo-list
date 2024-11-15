@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is mandatory")
     private String title;
 
     private String description;
@@ -24,6 +27,7 @@ public class Task {
 
     private boolean completed;
 
+    @FutureOrPresent(message = "Due date must be today or in the future")
     private LocalDate dueDate;
 
     private LocalDate completionDate;
