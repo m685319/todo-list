@@ -2,6 +2,7 @@ package com.example.todolist.service;
 
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.TaskRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -86,4 +87,44 @@ class TaskServiceTest {
         assertEquals(Task.Priority.LOW, actual.getPriority());
         assertEquals("Title 1", actual.getTitle());
     }
+
+    @Test
+    @DisplayName("Тест для проверки проставления флага 'archieved' = true")
+    void testArchiveTasksBeforeDate() {
+        // given
+        var task1 = new Task();
+        task1.setId(1L);
+        task1.setArchived(false);
+        var task2 = new Task();
+        task2.setId(2L);
+        task2.setArchived(false);
+        doReturn(List.of(task1, task2)).when(taskRepository)
+                .findByCompletedTrueAndCompletionDateBefore(any(LocalDate.class));
+
+        // when
+        taskService.archiveTasksBeforeDate(LocalDate.now());
+
+        // then
+        verify(taskRepository).saveAll(anyList());
+        assertTrue(task1.isArchived());
+        assertTrue(task2.isArchived());
+    }
+
+    @Test
+    void testUnarchiveTask() {
+        // given
+        var task1 = new Task();
+        task1.setId(1L);
+        task1.setArchived(true);
+        doReturn(Optional.of(task1)).when(taskRepository).findById(1L);
+
+        // when
+        taskService.unarchiveTask(1L);
+
+        // then
+        verify(taskRepository).findById(1L);
+        verify(taskRepository).save(task1);
+        assertFalse(task1.isArchived());
+    }
+
 }
