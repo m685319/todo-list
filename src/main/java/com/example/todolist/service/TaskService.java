@@ -36,7 +36,7 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Task not found"));
         task.setTitle(toUpdate.getTitle());
         task.setDescription(toUpdate.getDescription());
-        if(!task.isCompleted() && toUpdate.isCompleted()) {
+        if (!task.isCompleted() && toUpdate.isCompleted()) {
             task.setCompletionDate(LocalDate.now());
         } else if (task.isCompleted() && !toUpdate.isCompleted()) {
             task.setCompletionDate(null);
@@ -67,7 +67,7 @@ public class TaskService {
 
     public Task markAsCompleted(Long id) {
         Task task = getById(id);
-        if(!task.isCompleted()) {
+        if (!task.isCompleted()) {
             task.setCompleted(true);
             task.setCompletionDate(LocalDate.now());
         }
@@ -76,5 +76,19 @@ public class TaskService {
 
     public List<Task> getOverdueTasks() {
         return taskRepository.findByCompletedFalseAndDueDateBefore(LocalDate.now());
+    }
+
+    public void archiveTasksBeforeDate(LocalDate date) {
+        List<Task> tasksToArchive = taskRepository.findByCompletedTrueAndCompletionDateBefore(date);
+        tasksToArchive.forEach(task -> task.setArchived(true));
+        taskRepository.saveAll(tasksToArchive);
+    }
+
+    public void unarchiveTask(Long id) {
+        Task task = getById(id);
+        if (task.isArchived()) {
+            task.setArchived(false);
+            taskRepository.save(task);
+        }
     }
 }

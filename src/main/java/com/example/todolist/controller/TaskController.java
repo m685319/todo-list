@@ -69,4 +69,14 @@ public class TaskController {
     public List<Task> getOverdueTasks() {
         return taskService.getOverdueTasks();
     }
+
+    @PutMapping("/archive")
+    public void archiveTasks(@RequestParam LocalDate beforeDate) {
+        taskService.archiveTasksBeforeDate(beforeDate);
+    }
+
+    @PutMapping("/{id}/unarchive")
+    public void unarchiveTask(@RequestParam Long id) {
+        taskService.unarchiveTask(id);
+    }
 }

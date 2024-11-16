@@ -32,6 +32,8 @@ public class Task {
 
     private LocalDate completionDate;
 
+    private boolean archived;
+
     public enum Priority {
         LOW, MEDIUM, HIGH
     }
