@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: marie
+      changes:
+        - createTable:
+            tableName: task
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: priority
+                  type: VARCHAR(50)
+              - column:
+                  name: completed
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: due_date
+                  type: DATE
+              - column:
+                  name: completion_date
+                  type: DATE
+  - changeSet:
+      id: 2
+      author: marie
+      changes:
+        - addColumn:
+            tableName: task
+            columns:
+              - column:
+                  name: archived
+                  type: BOOLEAN
+                  defaultValue: false
