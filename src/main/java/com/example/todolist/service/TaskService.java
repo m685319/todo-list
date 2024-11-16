@@ -61,8 +61,15 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public List<Task> getTasksBeforeDate(boolean completed, LocalDate dueDate) {
-        return taskRepository.findTaskByCompletedAndDueDateBefore(completed, dueDate);
+    /**
+     * Метод получает задачи до указанной даты и с указанным статусом завершения.
+     *
+     * @param completed - статус завершения задачи.
+     * @param date      - верхняя граница для дедлайна задач.
+     * @return список найденных задач по указанным парамерам.
+     */
+    public List<Task> getTasksBeforeDate(boolean completed, LocalDate date) {
+        return taskRepository.findTaskByCompletedAndDueDateBefore(completed, date);
     }
 
     public Task markAsCompleted(Long id) {

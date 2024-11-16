@@ -150,8 +150,34 @@ class TaskServiceTest {
         // given
         doReturn(Optional.empty()).when(taskRepository).findById(anyLong());
 
+        // when & then
         var exception = assertThrows(EntityNotFoundException.class,
                 () -> taskService.updateTaskPriority(1L, Task.Priority.LOW));
         assertEquals("Task not found", exception.getMessage());
+    }
+
+    @Test
+    void testGetTasksBeforeDate() {
+        // given
+        var task1 = new Task();
+        task1.setId(1L);
+        task1.setCompleted(true);
+        task1.setDueDate(LocalDate.of(2024, 11, 13));
+        var task2 = new Task();
+        task2.setId(2L);
+        task2.setCompleted(true);
+        task2.setDueDate(LocalDate.of(2024, 11, 10));
+        var task3 = new Task();
+        task3.setId(3L);
+        task3.setCompleted(false);
+        task3.setDueDate(LocalDate.of(2024, 11, 19));
+        doReturn(List.of(task1, task2)).when(taskRepository).findTaskByCompletedAndDueDateBefore(true, LocalDate.of(2024, 11, 15));
+
+        // when
+        var result = taskService.getTasksBeforeDate(true, LocalDate.of(2024, 11, 15));
+
+        // then
+        verify(taskRepository).findTaskByCompletedAndDueDateBefore(true, LocalDate.of(2024, 11, 15));
+        assertEquals(2, result.size());
     }
 }
