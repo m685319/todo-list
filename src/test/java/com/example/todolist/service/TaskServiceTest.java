@@ -2,6 +2,7 @@ package com.example.todolist.service;
 
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.TaskRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -127,4 +128,30 @@ class TaskServiceTest {
         assertFalse(task1.isArchived());
     }
 
+    @Test
+    void testUpdateTaskPriority_taskFound() {
+        // given
+        var task = new Task();
+        task.setId(1L);
+        task.setPriority(Task.Priority.LOW);
+        doReturn(Optional.of(task)).when(taskRepository).findById(anyLong());
+
+        // when
+        taskService.updateTaskPriority(1L, Task.Priority.HIGH);
+
+        // then
+        verify(taskRepository).findById(1L);
+        verify(taskRepository).save(task);
+        assertEquals(Task.Priority.HIGH, task.getPriority());
+    }
+
+    @Test
+    void testUpdateTaskPriority_taskNotFound() {
+        // given
+        doReturn(Optional.empty()).when(taskRepository).findById(anyLong());
+
+        var exception = assertThrows(EntityNotFoundException.class,
+                () -> taskService.updateTaskPriority(1L, Task.Priority.LOW));
+        assertEquals("Task not found", exception.getMessage());
+    }
 }
