@@ -1,6 +1,6 @@
 package com.example.todolist.controller;
 
-import com.example.todolist.model.Task;
+import com.example.todolist.dto.TaskDTO;
 import com.example.todolist.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public Task createTask(@Valid @RequestBody Task task) {
+    public TaskDTO createTask(@Valid @RequestBody TaskDTO task) {
         return taskService.save(task);
     }
 
     @GetMapping
-    public Page<Task> getAllTasks(@RequestParam(defaultValue = "0") Integer page,
+    public Page<TaskDTO> getAllTasks(@RequestParam(defaultValue = "0") Integer page,
                                   @RequestParam(defaultValue = "10") Integer size,
                                   @RequestParam(defaultValue = "dueDate") String sortBy,
                                   @RequestParam(defaultValue = "ASC") String sortDir) {
@@ -31,12 +31,12 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTask(@PathVariable long id) {
+    public TaskDTO getTask(@PathVariable long id) {
         return taskService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task toUpdate) {
+    public TaskDTO updateTask(@PathVariable Long id, @RequestBody TaskDTO toUpdate) {
         return taskService.update(id, toUpdate);
     }
 
@@ -46,27 +46,27 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public List<Task> getTaskByTitle(@RequestParam String title) {
+    public List<TaskDTO> getTaskByTitle(@RequestParam String title) {
         return taskService.getByTitle(title);
     }
 
     @PutMapping("/{id}/priority")
-    public Task updateTaskPriority(@PathVariable long id, @RequestParam Task.Priority newPriority) {
+    public TaskDTO updateTaskPriority(@PathVariable long id, @RequestParam String newPriority) {
         return taskService.updateTaskPriority(id, newPriority);
     }
 
     @GetMapping("/filter")
-    public List<Task> filterByCompletedAndDueDate(@RequestParam LocalDate dueDate, @RequestParam boolean completed) {
+    public List<TaskDTO> filterByCompletedAndDueDate(@RequestParam LocalDate dueDate, @RequestParam boolean completed) {
         return taskService.getTasksBeforeDate(completed, dueDate);
     }
 
     @PutMapping("/{id}/complete")
-    public Task markTaskAsCompleted(@PathVariable Long id) {
+    public TaskDTO markTaskAsCompleted(@PathVariable Long id) {
         return taskService.markAsCompleted(id);
     }
 
     @GetMapping("/overdue")
-    public List<Task> getOverdueTasks() {
+    public List<TaskDTO> getOverdueTasks() {
         return taskService.getOverdueTasks();
     }
 

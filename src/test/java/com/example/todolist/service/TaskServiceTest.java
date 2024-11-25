@@ -1,13 +1,14 @@
 package com.example.todolist.service;
 
-import com.example.todolist.model.Task;
+import com.example.todolist.entity.Task;
+import com.example.todolist.mapper.TaskMapperImpl;
 import com.example.todolist.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -20,11 +21,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
-    @Mock
+    private TaskService taskService;
+
     private TaskRepository taskRepository;
 
-    @InjectMocks
-    private TaskService taskService;
+    @BeforeEach
+    void setUp() {
+        taskRepository = Mockito.mock(TaskRepository.class);
+        var taskMapper = new TaskMapperImpl();
+        taskService = new TaskService(taskRepository, taskMapper);
+    }
 
     @Test
     void testMarkAsCompleted() {
@@ -41,6 +47,7 @@ class TaskServiceTest {
         // then
         assertTrue(result.isCompleted());
         assertNotNull(result.getCompletionDate());
+        verify(taskRepository, times(1)).findById(1L);
         verify(taskRepository, times(1)).save(task);
     }
 
@@ -85,7 +92,7 @@ class TaskServiceTest {
 
         // then
         assertEquals(1L, actual.getId());
-        assertEquals(Task.Priority.LOW, actual.getPriority());
+        assertEquals(Task.Priority.LOW.name(), actual.getPriority());
         assertEquals("Title 1", actual.getTitle());
     }
 
@@ -137,7 +144,7 @@ class TaskServiceTest {
         doReturn(Optional.of(task)).when(taskRepository).findById(anyLong());
 
         // when
-        taskService.updateTaskPriority(1L, Task.Priority.HIGH);
+        taskService.updateTaskPriority(1L, Task.Priority.HIGH.name());
 
         // then
         verify(taskRepository).findById(1L);
@@ -152,7 +159,7 @@ class TaskServiceTest {
 
         // when & then
         var exception = assertThrows(EntityNotFoundException.class,
-                () -> taskService.updateTaskPriority(1L, Task.Priority.LOW));
+                () -> taskService.updateTaskPriority(1L, Task.Priority.LOW.name()));
         assertEquals("Task not found", exception.getMessage());
     }
 
