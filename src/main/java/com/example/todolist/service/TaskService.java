@@ -40,14 +40,14 @@ public class TaskService {
     }
 
     public TaskDTO getById(long id) {
-        Task task = taskRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Task task = taskRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Task not found with id: " + id));
 
         TaskDTO taskDTO = taskMapper.toDTO(task);
         taskDTO.setId(task.getId());
         taskDTO.setId(task.getId());
         taskDTO.setTitle(task.getTitle());
         taskDTO.setDescription(task.getDescription());
-        taskDTO.setPriority(task.getPriority().name()); // String type
+        taskDTO.setPriority(task.getPriority().name());
         taskDTO.setCompleted(task.isCompleted());
         taskDTO.setDueDate(task.getDueDate());
         taskDTO.setCompletionDate(task.getCompletionDate());
